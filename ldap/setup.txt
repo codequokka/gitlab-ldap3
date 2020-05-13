@@ -1,0 +1,37 @@
+#
+https://directory.apache.org/studio/
+
+
+#
+[vagrant@ldap ~]$ slappasswd
+New password: 
+Re-enter new password: 
+{SSHA}W8JjMWYOE26NmFw1e/94S9ZbHT7tbPqB
+
+sudo ldapadd -Y EXTERNAL -H ldapi:// -f ldap/ldif/add_root_password.ldif
+
+
+#
+ldapmodify -x -D cn=config -w password -f ldap/ldif/change_domain.ldif
+
+
+#
+ldapadd -x -D "cn=Manager,dc=example,dc=com" -w password -f ldap/ldif/add_base.ldif
+
+
+#
+sudo journalctl -u slapd -f
+
+
+#
+ldapsearch -x -D "cn=Manager,dc=example,dc=com" -w password -b "ou=People,dc=example,dc=com"
+
+
+#
+sudo ldapadd -Y EXTERNAL -H ldapi:// -f /etc/openldap/schema/cosine.ldif
+sudo ldapadd -Y EXTERNAL -H ldapi:// -f /etc/openldap/schema/inetorgperson.ldif
+sudo ldapadd -Y EXTERNAL -H ldapi:// -f /etc/openldap/schema/nis.ldif 
+
+
+#
+ldapadd -x -D "cn=Manager,dc=example,dc=com" -w password -f ldap/ldif/add_user1.ldif

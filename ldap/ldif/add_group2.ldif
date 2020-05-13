@@ -1,0 +1,6 @@
+dn: cn=group2,ou=Group,dc=example,dc=com
+objectClass: groupOfNames
+objectClass: top
+cn: group2
+member: uid=user2,ou=People,dc=example,dc=com
+member: uid=user22,ou=People,dc=example,dc=com
