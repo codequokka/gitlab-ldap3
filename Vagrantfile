@@ -34,6 +34,35 @@ Vagrant.configure("2") do |config|
     SHELL
   end
 
+  config.vm.define "gitlab2" do |gitlab2|
+    gitlab2.vm.hostname = "gitlab2"
+    gitlab2.vm.network "forwarded_port", guest: 80, host: 10080, host_ip: "127.0.0.1"
+    gitlab2.vm.network "private_network", ip: "192.168.33.11"
+
+    gitlab2.vm.provider "virtualbox" do |vb|
+      vb.memory = "4096"
+    end
+
+    gitlab2.vm.provision "shell", inline: <<-SHELL
+      sudo yum install -y curl policycoreutils-python openssh-server
+      sudo systemctl enable sshd
+      sudo systemctl start sshd
+      # sudo firewall-cmd --permanent --add-service=http
+      # sudo firewall-cmd --permanent --add-service=https
+      # sudo systemctl reload firewalld
+
+      sudo yum install -y postfix
+      sudo systemctl enable postfix
+      sudo systemctl start postfix
+
+      curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.rpm.sh | sudo bash
+
+      sudo EXTERNAL_URL="http://gitlab.example.com" yum install -y gitlab-ee
+
+      sudo gitlab-ctl reconfigure
+    SHELL
+  end
+
   config.vm.define "ldap" do |ldap|
     ldap.vm.hostname = "ldap"
     ldap.vm.network "forwarded_port", guest: 389, host: 10389, host_ip: "127.0.0.1"
